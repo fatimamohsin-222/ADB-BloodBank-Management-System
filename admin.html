@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blood Bank Admin Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/cal-heatmap@4.3.3/dist/cal-heatmap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="scripts.js"></script>
+</head>
+<body>
+
+  <h1>Blood Bank Admin Dashboard</h1>
+
+  <section class="dashboard-cards">
+  <div class="card">
+    <h2 id="total-donors">0</h2>
+    <p>Total Donors</p>
+  </div>
+  <div class="card">
+    <h2 id="total-recipients">0</h2>
+    <p>Total Recipients</p>
+  </div>
+  <div class="card">
+    <h2 id="total-donations">0</h2>
+    <p>Total Donations</p>
+  </div>
+  <div class="card">
+    <h2 id="total-transfusions">0</h2>
+    <p>Total Transfusions</p>
+  </div>
+  <div class="card">
+    <h2 id="total-requests">0</h2>
+    <p>Total Requests</p>
+  </div>
+</section>
+
+
+  <!-- Charts Section -->
+  <section class="charts-container">
+    <div class="chart-box">
+      <h3>Gender Distribution</h3>
+      <canvas id="genderChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Donor Blood Group Distribution</h3>
+      <canvas id="bloodGroupChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Donation Blood Group Distribution</h3>
+      <canvas id="donationBloodGroupChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Donation Dates Heatmap</h3>
+      <div id="donationHeatmap" class="heatmap-calendar"></div>
+    </div>
+
+    <div class="chart-box">
+      <h3>Transfusion Status</h3>
+      <canvas id="transfusionStatusChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Recipient Blood Group Distribution</h3>
+      <canvas id="recipientBloodGroupChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Recipient Gender Distribution</h3>
+      <canvas id="recipientGenderChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Request Status</h3>
+      <canvas id="requestStatusChart"></canvas>
+    </div>
+  </section>
+
+  <!-- Analytics Section -->
+  <section class="analytics-container">
+    <div class="analytics-box">
+      <h3>Recent Donations</h3>
+      <ul id="recent-donations-list">
+        <li>No recent donations yet.</li>
+      </ul>
+    </div>
+
+    <div class="analytics-box">
+      <h3>Expiring Donations (within 7 days)</h3>
+      <ul id="expiring-donations-list">
+        <li>No expiring donations.</li>
+      </ul>
+    </div>
+
+    <div class="analytics-box">
+      <h3>Expired Donations</h3>
+      <ul id="expired-donations-list">
+        <li>No expired donations.</li>
+      </ul>
+    </div>
+
+    <div class="analytics-box">
+      <h3>Average Donation Frequency</h3>
+      <div id="avg-donation-frequency">Calculating...</div>
+    </div>
+  </section>
+
+  
+
+  <!-- Map View Button -->
+  <section class="map-button-container">
+    <a href="map.html" class="map-view-button">🌐 View Map</a>
+  </section>
+
+</body>
+</html>
