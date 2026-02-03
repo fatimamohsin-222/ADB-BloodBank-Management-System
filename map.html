@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blood Bank Donor Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        background-color: #fdf0d5;
+      }
+
+      .sidebar {
+        width: 280px;
+        padding: 20px;
+        background-color: #fdf0d5;
+        border-right: 1px solid #ddd;
+      }
+
+      .sidebar h2 {
+        color: #780000;
+        margin-bottom: 15px;
+      }
+
+      .filters input,
+      .filters select,
+      .filters button {
+        width: 95%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+      }
+
+      .filters button {
+        background-color: #003049;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .filters button:hover {
+        background-color: #669bbc;
+      }
+
+      #map {
+        flex: 1;
+        height: 100%;
+      }
+
+      .notification {
+        margin-top: 20px;
+        color: #669bbc;
+        font-weight: bold;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>FILTER DONORS</h2>
+      <div class="filters">
+        <input type="text" id="nameInput" placeholder="Search by name" />
+        <select id="bloodGroupSelect">
+          <option value="">All Blood Groups</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
+        <button onclick="loadDonors()">🔍 Search</button>
+      </div>
+      <div class="notification" id="notification">
+        No donors found for this search.
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script>
+                        const map = L.map('map').setView([31.5204, 74.3587], 12);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                          maxZoom: 18,
+                          attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+
+                        const markers = L.markerClusterGroup();
+                        map.addLayer(markers);
+
+                       const redIcon = L.icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        iconSize: [32, 32], // size of the icon
+        iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -30] // point from which the popup should open relative to the iconAnchor
+      });
+
+
+
+
+                        function clearMarkers() {
+                          markers.clearLayers();
+                        }
+
+                        function loadDonors() {
+                          clearMarkers();
+                          document.getElementById('notification').style.display = 'none';
+
+                          const name = document.getElementById('nameInput').value;
+                          const city = document.getElementById('cityInput')?.value || '';
+                          const bloodGroup = document.getElementById('bloodGroupSelect').value;
+
+                          const query = new URLSearchParams({ name, city, bloodGroup }).toString();
+
+                          fetch(`http://localhost:5000/api/donors?${query}`)
+                            .then(res => res.json())
+                            .then(data => {
+                              if (!Array.isArray(data.donors) || data.donors.length === 0) {
+                                document.getElementById('notification').style.display = 'block';
+                                return;
+                              }
+
+                              data.donors.forEach(donor => {
+                                if (donor.coordinates?.length === 2) {
+                                  const [lng, lat] = donor.coordinates;
+                                  const marker = L.marker([lat, lng], { icon: redIcon })
+                                    .bindPopup(`<b>${donor.name}</b><br>${donor.bloodGroup}<br>${donor.address}`);
+                                  markers.addLayer(marker);
+                                }
+                              });
+                            })
+                            .catch(err => console.error('Error loading donor data:', err));
+                        }
+
+                        // Initial load
+                        loadDonors();
+    </script>
+  </body>
+</html>
